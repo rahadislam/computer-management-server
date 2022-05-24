@@ -19,12 +19,20 @@ async function run(){
         await client.connect();
         console.log('mongodb connet');
         const serviceCollecton = client.db('manufactur').collection('service');
+       
         app.get('/service',async(req,res)=>{
             const query={};
             const carsor=serviceCollecton.find(query);
             const service=await carsor.toArray();
             res.send(service);
         })
+        app.post('/service', async (req, res) => {
+            const newService = req.body;
+            console.log(newService)
+            const result = await serviceCollecton.insertOne(newService);
+
+            res.send(result);
+        });
 
     }
     finally{
