@@ -1,5 +1,6 @@
 const express = require('express');
 const app=express();
+const jwt = require('jsonwebtoken');
 const port=process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion,ObjectId } = require('mongodb');
 const cors =require('cors');
@@ -19,21 +20,54 @@ async function run(){
         await client.connect();
         console.log('mongodb connet');
         const serviceCollecton = client.db('manufactur').collection('service');
+        const userCollecton = client.db('manufactur').collection('user');
        
         app.get('/service',async(req,res)=>{
+
             const query={};
             const carsor=serviceCollecton.find(query);
             const service=await carsor.toArray();
             res.send(service);
         })
+        app.post('/service', async (req, res) => {
+            const newService = req.body;
+            const result = await serviceCollecton.insertOne(newService);
+
+            res.send(result);
+        });
         app.delete('/service/:id', async (req, res) => {
             const id=req.params.id;
-            console.log(id);
             const filter={_id:ObjectId(id)};
             const result = await serviceCollecton.deleteOne(filter);
 
             res.send(result);
         });
+        app.get('/user',async(req,res)=>{
+            const result=await userCollecton.find().toArray();
+            res.send(result);
+        })
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+              $set: user,
+            };
+            const result = await userCollecton.updateOne(filter, updateDoc, options);
+            const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN, { expiresIn: '1h' })
+            res.send({result,token});
+          })
+        app.put('/user/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const updateDoc = {
+              $set: {role:'admin'},
+            };
+            const result = await userCollecton.updateOne(filter, updateDoc);
+            
+            res.send(result);
+          })
 
     }
     finally{
