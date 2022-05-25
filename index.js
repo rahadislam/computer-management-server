@@ -1,7 +1,7 @@
 const express = require('express');
 const app=express();
 const port=process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion,ObjectId } = require('mongodb');
 const cors =require('cors');
 //manufacture
 //c5uDTfHnU1csdoXl
@@ -26,10 +26,11 @@ async function run(){
             const service=await carsor.toArray();
             res.send(service);
         })
-        app.post('/service', async (req, res) => {
-            const newService = req.body;
-            console.log(newService)
-            const result = await serviceCollecton.insertOne(newService);
+        app.delete('/service/:id', async (req, res) => {
+            const id=req.params.id;
+            console.log(id);
+            const filter={_id:ObjectId(id)};
+            const result = await serviceCollecton.deleteOne(filter);
 
             res.send(result);
         });
