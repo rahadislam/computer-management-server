@@ -21,6 +21,7 @@ async function run(){
         console.log('mongodb connet');
         const serviceCollecton = client.db('manufactur').collection('service');
         const userCollecton = client.db('manufactur').collection('user');
+        const reviewCollecton = client.db('manufactur').collection('review');
        
         app.get('/service',async(req,res)=>{
 
@@ -35,6 +36,21 @@ async function run(){
 
             res.send(result);
         });
+        app.get('/review',async(req,res)=>{
+
+            const query={};
+            const carsor=reviewCollecton.find(query);
+            const service=await carsor.toArray();
+            res.send(service);
+        })
+        app.post('/review', async (req, res) => {
+            const newService = req.body;
+            const result = await reviewCollecton.insertOne(newService);
+
+            res.send(result);
+        });
+
+
         app.delete('/service/:id', async (req, res) => {
             const id=req.params.id;
             const filter={_id:ObjectId(id)};
