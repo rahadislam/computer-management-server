@@ -40,7 +40,7 @@ async function run() {
         const userCollecton = client.db('manufactur').collection('user');
         const reviewCollecton = client.db('manufactur').collection('review');
 
-        app.get('/service',verifyJWT, async (req, res) => {
+        app.get('/service', async (req, res) => {
 
             const query = {};
             const carsor = serviceCollecton.find(query);
@@ -53,7 +53,7 @@ async function run() {
 
             res.send(result);
         });
-        app.get('/review',verifyJWT, async (req, res) => {
+        app.get('/review', async (req, res) => {
 
             const query = {};
             const carsor = reviewCollecton.find(query);
@@ -72,6 +72,13 @@ async function run() {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
             const result = await serviceCollecton.deleteOne(filter);
+
+            res.send(result);
+        });
+        app.get('/service/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await serviceCollecton.findOne(filter);
 
             res.send(result);
         });
