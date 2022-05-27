@@ -39,6 +39,7 @@ async function run() {
         const serviceCollecton = client.db('manufactur').collection('service');
         const userCollecton = client.db('manufactur').collection('user');
         const reviewCollecton = client.db('manufactur').collection('review');
+        const orderCollecton = client.db('manufactur').collection('order');
 
         app.get('/service', async (req, res) => {
 
@@ -47,9 +48,22 @@ async function run() {
             const service = await carsor.toArray();
             res.send(service);
         })
+        app.get('/order', async (req, res) => {
+
+            const query = {};
+            const carsor = orderCollecton.find(query);
+            const service = await carsor.toArray();
+            res.send(service);
+        })
         app.post('/service', async (req, res) => {
             const newService = req.body;
             const result = await serviceCollecton.insertOne(newService);
+
+            res.send(result);
+        });
+        app.post('/order', async (req, res) => {
+            const newService = req.body;
+            const result = await orderCollecton.insertOne(newService);
 
             res.send(result);
         });
@@ -75,10 +89,31 @@ async function run() {
 
             res.send(result);
         });
+        app.delete('/order/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await orderCollecton.deleteOne(filter);
+
+            res.send(result);
+        });
+        app.delete('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await userCollecton.deleteOne(filter);
+
+            res.send(result);
+        });
         app.get('/service/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
             const result = await serviceCollecton.findOne(filter);
+
+            res.send(result);
+        });
+        app.get('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await userCollecton.findOne(filter);
 
             res.send(result);
         });
