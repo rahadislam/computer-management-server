@@ -40,6 +40,7 @@ async function run() {
         const userCollecton = client.db('manufactur').collection('user');
         const reviewCollecton = client.db('manufactur').collection('review');
         const orderCollecton = client.db('manufactur').collection('order');
+        const updateuserCollecton = client.db('manufactur').collection('updateuser');
 
         app.get('/service', async (req, res) => {
 
@@ -74,9 +75,22 @@ async function run() {
             const service = await carsor.toArray();
             res.send(service);
         })
+        app.get('/userUpdate', async (req, res) => {
+
+            const query = {};
+            const carsor = updateuserCollecton.find(query);
+            const service = await carsor.toArray();
+            res.send(service);
+        })
         app.post('/review', async (req, res) => {
             const newService = req.body;
             const result = await reviewCollecton.insertOne(newService);
+
+            res.send(result);
+        });
+        app.post('/userUpdate', async (req, res) => {
+            const newService = req.body;
+            const result = await updateuserCollecton.insertOne(newService);
 
             res.send(result);
         });
